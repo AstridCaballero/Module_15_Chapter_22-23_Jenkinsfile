@@ -1,0 +1,34 @@
+---
+- name: Install Docker
+  hosts: tag_Name_prod_server
+  become: yes
+  tasks:
+    - name: Make sure Docker is installed
+      yum:
+        name: docker
+        update_cache: yes
+        state: present
+    - name: Ensure Docker is running
+      systemd:
+        name: docker
+        state: started
+
+- name: Install Docker-compose
+  hosts: tag_Name_prod_server
+  become: yes
+  become_user: astrid
+  vars_files:
+    project-vars
+  tasks:
+    - name: Create docker-compose directory
+      file:
+        path: ~/.docker/cli-plugins
+        state: directory
+    - name: get architecture of remote machine
+      shell: uname -m
+      register: remote_arch
+    - name: Install docker-compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v{{docker_compose_version}}/docker-compose-linux-{{remote_arch.stdout}}
+        dest: ~/.docker/cli-plugins/docker-compose
+        mode: +x
