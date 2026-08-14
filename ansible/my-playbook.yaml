@@ -1,6 +1,6 @@
 ---
 - name: Install Docker
-  hosts: tag_Name_prod_server
+  hosts: all
   become: yes
   tasks:
     - name: Make sure Docker is installed
@@ -14,11 +14,7 @@
         state: started
 
 - name: Install Docker-compose
-  hosts: tag_Name_prod_server
-  become: yes
-  become_user: astrid
-  vars_files:
-    project-vars
+  hosts: all
   tasks:
     - name: Create docker-compose directory
       file:
